@@ -9,9 +9,11 @@ interface SidebarProps {
 const links: Record<string, { href: string; label: string }[]> = {
   Cartera: [
     { href: '/cartera/solicitudes', label: 'Solicitudes' },
+    { href: '/cartera/recibos', label: 'Recibos' },
   ],
   Admin: [
     { href: '/cartera/solicitudes', label: 'Solicitudes' },
+    { href: '/cartera/recibos', label: 'Recibos' },
     { href: '/admin/users', label: 'Usuarios' },
   ],
 };

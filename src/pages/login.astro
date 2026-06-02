@@ -1,0 +1,54 @@
+---
+import AuthLayout from '../layouts/AuthLayout.astro';
+
+const redirect = Astro.url.searchParams.get('redirect') ?? '/';
+---
+
+<AuthLayout title="Iniciar Sesion">
+  <div class="rounded-xl bg-white p-8 shadow-lg dark:bg-gray-800">
+    <h2 class="mb-6 text-xl font-semibold text-gray-900 dark:text-white text-center">
+      Iniciar Sesion
+    </h2>
+
+    <form method="POST" action="/api/auth/login" class="space-y-4">
+      <input type="hidden" name="redirect" value={redirect} />
+
+      <div>
+        <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+          Email
+        </label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          required
+          autocomplete="email"
+          class="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+          placeholder="correo@empresa.com"
+        />
+      </div>
+
+      <div>
+        <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+          Contraseña
+        </label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          required
+          autocomplete="current-password"
+          class="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+          placeholder="••••••••"
+        />
+      </div>
+
+      <button
+        type="submit"
+        class="w-full rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+      >
+        Ingresar
+      </button>
+    </form>
+  </div>
+</AuthLayout>

@@ -1,0 +1,14 @@
+---
+import MainLayout from '../../layouts/MainLayout.astro';
+import SolicitudesTable from '../../components/SolicitudesTable';
+
+const user = Astro.locals.user as { role: string } | undefined;
+
+if (!user) {
+  return Astro.redirect('/login');
+}
+---
+
+<MainLayout title="Solicitudes">
+  <SolicitudesTable client:load />
+</MainLayout>

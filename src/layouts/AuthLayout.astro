@@ -1,0 +1,27 @@
+---
+import '../styles/global.css';
+
+export interface Props {
+  title: string;
+}
+---
+
+<!doctype html>
+<html lang="es" class="h-full">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{Astro.props.title} | CarteraCobro</title>
+  </head>
+  <body class="flex h-full min-h-screen items-center justify-center bg-gray-50 px-4 dark:bg-gray-900">
+    <div class="w-full max-w-md">
+      <div class="mb-8 text-center">
+        <h1 class="text-3xl font-bold text-gray-900 dark:text-white">CarteraCobro</h1>
+        <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
+          Sistema de gestion de cobranza
+        </p>
+      </div>
+      <slot />
+    </div>
+  </body>
+</html>

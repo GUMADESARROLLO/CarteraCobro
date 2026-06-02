@@ -1,0 +1,14 @@
+---
+import MainLayout from '../../layouts/MainLayout.astro';
+import UsersTable from '../../components/UsersTable';
+
+const user = Astro.locals.user as { role: string } | undefined;
+
+if (!user || user.role !== 'Admin') {
+  return Astro.redirect('/login');
+}
+---
+
+<MainLayout title="Gestion de Usuarios">
+  <UsersTable client:load />
+</MainLayout>

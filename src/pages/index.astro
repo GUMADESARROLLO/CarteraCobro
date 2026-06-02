@@ -1,0 +1,13 @@
+---
+const user = Astro.locals.user as { role: string } | undefined;
+
+if (!user) {
+  return Astro.redirect('/login');
+}
+
+if (user.role === 'Admin') {
+  return Astro.redirect('/admin/users');
+}
+
+return Astro.redirect('/cartera/solicitudes');
+---

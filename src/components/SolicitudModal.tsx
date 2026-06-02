@@ -70,7 +70,7 @@ export default function SolicitudModal({ solicitud, onClose, onAprobar, onRechaz
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
-      <div className="bg-white dark:bg-gray-800 w-full max-w-md rounded-xl border border-zinc-200 dark:border-gray-600 shadow-xl overflow-hidden">
+      <div className="bg-white dark:bg-gray-800 w-full max-w-lg rounded-xl border border-zinc-200 dark:border-gray-600 shadow-xl overflow-hidden">
 
         {/* Header */}
         <div className="flex items-start justify-between px-6 py-4 border-b border-zinc-100 dark:border-gray-700">
@@ -152,30 +152,30 @@ export default function SolicitudModal({ solicitud, onClose, onAprobar, onRechaz
               </span>
               <span className="text-zinc-700 dark:text-gray-300">{formatDate(solicitud.fecha)}</span>
             </div>
-            <div className="flex justify-between items-start px-4 py-2.5 border-b border-zinc-100 dark:border-gray-700">
-              <span className="text-zinc-400 dark:text-gray-400 flex items-center gap-2 pt-0.5">
-                <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" strokeLinecap="round"/>
-                </svg>
-                Resolución
-              </span>
-              <span className="text-zinc-700 dark:text-gray-300 text-right max-w-[55%]">
-                {solicitud.resolucion || <span className="italic text-zinc-300 dark:text-gray-500">Sin resolución</span>}
-              </span>
-            </div>
             {solicitud.motivo && (
-              <div className="flex justify-between items-start px-4 py-2.5">
-                <span className="text-zinc-400 dark:text-gray-400 flex items-center gap-2 pt-0.5">
+              <div className="px-4 py-2.5 border-b border-zinc-100 dark:border-gray-700">
+                <span className="text-zinc-400 dark:text-gray-400 flex items-center gap-2 mb-1.5">
                   <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" strokeLinecap="round"/>
                   </svg>
                   Motivo
                 </span>
-                <span className="text-zinc-700 dark:text-gray-300 text-right max-w-[55%]">
+                <p className="text-sm text-zinc-700 dark:text-gray-300 leading-relaxed">
                   {solicitud.motivo}
-                </span>
+                </p>
               </div>
             )}
+            <div className="px-4 py-2.5">
+              <span className="text-zinc-400 dark:text-gray-400 flex items-center gap-2 mb-1.5">
+                <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" strokeLinecap="round"/>
+                </svg>
+                Resolución
+              </span>
+              <p className="text-sm text-zinc-700 dark:text-gray-300 leading-relaxed">
+                {solicitud.resolucion || <span className="italic text-zinc-300 dark:text-gray-500">Sin resolución</span>}
+              </p>
+            </div>
           </div>
         </div>
 

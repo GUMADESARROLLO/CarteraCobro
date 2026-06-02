@@ -68,16 +68,20 @@ export default function SolicitudesTable() {
   const [showPicker, setShowPicker] = useState(false);
   const [applied, setApplied] = useState(1);
   const [revisarSolicitud, setRevisarSolicitud] = useState<Solicitud | null>(null);
+  const [vendedores, setVendedores] = useState<{ VENDEDOR: string; NOMBRE: string }[]>([]);
+  const [vendedorSel, setVendedorSel] = useState('');
   const pickerRef = useRef<HTMLDivElement>(null);
 
   const estadoRef = useRef(estado);
   const rutaRef = useRef(ruta);
   const fechaDesdeRef = useRef(fechaDesde);
   const fechaHastaRef = useRef(fechaHasta);
+  const vendedorRef = useRef(vendedorSel);
   estadoRef.current = estado;
   rutaRef.current = ruta;
   fechaDesdeRef.current = fechaDesde;
   fechaHastaRef.current = fechaHasta;
+  vendedorRef.current = vendedorSel;
 
   const yearActual = new Date().getFullYear();
 
@@ -124,6 +128,7 @@ export default function SolicitudesTable() {
       const r = rutaRef.current;
       const fd = fechaDesdeRef.current;
       const fh = fechaHastaRef.current;
+      const v = vendedorRef.current;
 
       const params = new URLSearchParams();
       params.set('page', String(p));
@@ -131,6 +136,7 @@ export default function SolicitudesTable() {
       if (r) params.set('ruta', r);
       if (fd) params.set('fecha_desde', fd);
       if (fh) params.set('fecha_hasta', fh);
+      if (v) params.set('vendedor', v);
 
       const res = await fetch(`/api/solicitudes?${params.toString()}`);
       if (!res.ok) {
@@ -193,6 +199,13 @@ export default function SolicitudesTable() {
   }, []);
 
   useEffect(() => {
+    fetch('/api/vendedores')
+      .then(r => r.ok ? r.json() : { vendedores: [] })
+      .then(j => setVendedores(j.vendedores ?? []))
+      .catch(() => {});
+  }, []);
+
+  useEffect(() => {
     function handleClick(e: MouseEvent) {
       if (pickerRef.current && !pickerRef.current.contains(e.target as Node)) {
         setShowPicker(false);
@@ -232,6 +245,7 @@ export default function SolicitudesTable() {
       if (ruta) params.set('ruta', ruta);
       if (fechaDesde) params.set('fecha_desde', fechaDesde);
       if (fechaHasta) params.set('fecha_hasta', fechaHasta);
+      if (vendedorSel) params.set('vendedor', vendedorSel);
 
       const res = await fetch(`/api/solicitudes?export=csv&${params.toString()}`);
       if (!res.ok) throw new Error('Error al exportar');
@@ -289,6 +303,7 @@ export default function SolicitudesTable() {
 
     addToast(`Solicitud ${nuevoEstado.toLowerCase()} exitosamente`, 'success');
     setPage(1);
+    setApplied(n => n + 1);
     return true;
   }
 
@@ -433,6 +448,20 @@ export default function SolicitudesTable() {
             >
               {ESTADOS.map((s) => (
                 <option key={s} value={s}>{ESTADO_LABELS[s]}</option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-xs font-medium text-gray-500 dark:text-gray-400">Vendedor</label>
+            <select
+              value={vendedorSel}
+              onChange={(e) => { setVendedorSel(e.target.value); }}
+              className="mt-1 w-40 rounded-lg border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+            >
+              <option value="">Todos</option>
+              {vendedores.map((v) => (
+                <option key={v.VENDEDOR} value={v.VENDEDOR}>{v.VENDEDOR} - {v.NOMBRE}</option>
               ))}
             </select>
           </div>

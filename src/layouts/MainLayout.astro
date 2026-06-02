@@ -17,7 +17,7 @@ const title = Astro.props.title;
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title} | CarteraCobro</title>
   </head>
-  <body class="h-full bg-gray-50 dark:bg-gray-900">
+    <body class="h-full bg-gray-50 dark:bg-gray-900">
     <div class="flex h-full">
       <Sidebar
         client:load
@@ -26,7 +26,7 @@ const title = Astro.props.title;
         currentPath={Astro.url.pathname}
       />
 
-      <div class="flex flex-1 flex-col overflow-hidden lg:ml-64">
+      <div class="flex flex-1 flex-col overflow-hidden transition-all duration-300 lg:ml-64 [[data-sidebar-collapsed]_&]:lg:ml-16">
         <header class="flex h-16 shrink-0 items-center justify-between border-b border-gray-200 bg-white px-4 dark:border-gray-700 dark:bg-gray-800 sm:px-6">
           <h1 class="text-lg font-semibold text-gray-900 dark:text-white">{title}</h1>
           {

@@ -37,6 +37,7 @@ export const GET: APIRoute = async ({ request, locals }) => {
   const ruta = url.searchParams.get('ruta') || '';
   const fechaDesde = url.searchParams.get('fecha_desde') || '';
   const fechaHasta = url.searchParams.get('fecha_hasta') || '';
+  const vendedor = url.searchParams.get('vendedor') || '';
   const exportCsv = url.searchParams.get('export') === 'csv';
   const limit = exportCsv ? 10000 : 20;
 
@@ -61,6 +62,11 @@ export const GET: APIRoute = async ({ request, locals }) => {
   if (fechaHasta) {
     conditions.push('DATE(fecha) <= ?');
     params.push(fechaHasta);
+  }
+
+  if (vendedor) {
+    conditions.push('ruta = ?');
+    params.push(vendedor);
   }
 
   const where = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';

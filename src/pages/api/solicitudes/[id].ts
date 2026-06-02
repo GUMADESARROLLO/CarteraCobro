@@ -18,7 +18,7 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
 
   try {
     const body = await request.json();
-    const { estado, motivo } = body as { estado?: string; motivo?: string };
+    const { estado, resolucion } = body as { estado?: string; resolucion?: string };
 
     if (!estado || !['Aprobado', 'Rechazado'].includes(estado)) {
       return new Response(JSON.stringify({ error: 'Estado invalido. Use Aprobado o Rechazado' }), {
@@ -27,8 +27,8 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
     }
 
     await execute(
-      'UPDATE solicitudes SET estado = ?, motivo = ? WHERE id = ?',
-      [estado, motivo || null, id]
+      'UPDATE solicitudes SET estado = ?, resolucion = ? WHERE id = ?',
+      [estado, resolucion || null, id]
     );
 
     return new Response(JSON.stringify({ success: true }), {

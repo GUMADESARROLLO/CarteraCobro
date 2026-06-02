@@ -13,6 +13,7 @@ interface SolicitudRow extends RowDataPacket {
   fecha: string;
   estado: string;
   motivo: string | null;
+  resolucion: string | null;
   saldo_actual: number;
   limite_actual: number;
   disponible_actual: number;
@@ -66,7 +67,7 @@ export const GET: APIRoute = async ({ request, locals }) => {
 
   if (exportCsv) {
     const rows = await query<SolicitudRow[]>(
-      `SELECT id, codigo, ruta, cliente, cod_cliente, monto, fecha, estado, motivo,
+      `SELECT id, codigo, ruta, cliente, cod_cliente, monto, fecha, estado, motivo, resolucion,
               saldo_actual, limite_actual, disponible_actual
        FROM solicitudes ${where} ORDER BY fecha DESC LIMIT ?`,
       [...params, limit]
@@ -81,6 +82,7 @@ export const GET: APIRoute = async ({ request, locals }) => {
       Fecha: r.fecha,
       Estado: r.estado,
       Motivo: r.motivo ?? '',
+      Resolucion: r.resolucion ?? '',
       'Saldo Actual': Number(r.saldo_actual),
       'Limite Actual': Number(r.limite_actual),
       'Disponible Actual': Number(r.disponible_actual),
@@ -110,7 +112,7 @@ export const GET: APIRoute = async ({ request, locals }) => {
   const totalPages = Math.ceil(total / limit);
 
   const rows = await query<SolicitudRow[]>(
-    `SELECT id, codigo, ruta, cliente, cod_cliente, monto, fecha, estado, motivo,
+    `SELECT id, codigo, ruta, cliente, cod_cliente, monto, fecha, estado, motivo, resolucion,
             saldo_actual, limite_actual, disponible_actual
      FROM solicitudes ${where} ORDER BY fecha DESC LIMIT ? OFFSET ?`,
     [...params, limit, offset]

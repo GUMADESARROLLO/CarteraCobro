@@ -19,6 +19,7 @@ interface Solicitud {
   fecha: string;
   estado: string;
   motivo: string | null;
+  resolucion: string | null;
   saldo_actual: number;
   limite_actual: number;
   disponible_actual: number;
@@ -154,6 +155,43 @@ export default function SolicitudesTable() {
 
   useEffect(() => { fetchData(); }, [fetchData]);
 
+  const lastSigRef = useRef('');
+
+  useEffect(() => {
+    const id = setInterval(async () => {
+      try {
+        const check = await fetch('/api/solicitudes/check');
+        if (!check.ok) return;
+        const { maxId, total } = await check.json();
+        const sig = `${maxId}-${total}`;
+        if (sig === lastSigRef.current) return;
+        lastSigRef.current = sig;
+
+        const p = pageRef.current;
+        const e = estadoRef.current;
+        const r = rutaRef.current;
+        const fd = fechaDesdeRef.current;
+        const fh = fechaHastaRef.current;
+
+        const params = new URLSearchParams();
+        params.set('page', String(p));
+        if (e) params.set('estado', e);
+        if (r) params.set('ruta', r);
+        if (fd) params.set('fecha_desde', fd);
+        if (fh) params.set('fecha_hasta', fh);
+
+        const res = await fetch(`/api/solicitudes?${params.toString()}`);
+        if (!res.ok) return;
+        const json: SolicitudResponse = await res.json();
+        setData(json.data);
+        setPage(json.page);
+        setTotalPages(json.totalPages);
+        setTotal(json.total);
+      } catch { /* ignore */ }
+    }, 30000);
+    return () => clearInterval(id);
+  }, []);
+
   useEffect(() => {
     function handleClick(e: MouseEvent) {
       if (pickerRef.current && !pickerRef.current.contains(e.target as Node)) {
@@ -212,7 +250,7 @@ export default function SolicitudesTable() {
   }
 
   async function confirmAction(id: number, nuevoEstado: 'Aprobado' | 'Rechazado'): Promise<boolean> {
-    const { value: motivo } = await Swal.fire({
+    const result = await Swal.fire({
       title: nuevoEstado === 'Aprobado' ? 'Aprobar solicitud' : 'Rechazar solicitud',
       icon: nuevoEstado === 'Aprobado' ? 'success' : 'warning',
       input: 'textarea',
@@ -221,33 +259,37 @@ export default function SolicitudesTable() {
       confirmButtonText: nuevoEstado === 'Aprobado' ? 'Sí, aprobar' : 'Sí, rechazar',
       cancelButtonText: 'Cancelar',
       confirmButtonColor: nuevoEstado === 'Aprobado' ? '#22c55e' : '#ef4444',
-      inputValidator: (value) => {
-        if (nuevoEstado === 'Rechazado' && !value?.trim()) return 'Debe ingresar un motivo para rechazar';
+      showLoaderOnConfirm: true,
+      allowOutsideClick: false,
+      preConfirm: async (inputValue) => {
+        if (nuevoEstado === 'Rechazado' && !inputValue?.trim()) {
+          Swal.showValidationMessage('Debe ingresar un motivo para rechazar');
+          return false;
+        }
+        try {
+          const res = await fetch(`/api/solicitudes/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ estado: nuevoEstado, resolucion: inputValue?.trim() || null }),
+          });
+          if (!res.ok) {
+            const err = await res.json();
+            Swal.showValidationMessage(err.error || 'Error al actualizar');
+            return false;
+          }
+          return true;
+        } catch {
+          Swal.showValidationMessage('Error de conexión');
+          return false;
+        }
       },
     });
 
-    if (motivo === undefined) return false;
+    if (!result.isConfirmed) return false;
 
-    try {
-      const res = await fetch(`/api/solicitudes/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ estado: nuevoEstado, motivo: motivo.trim() || null }),
-      });
-
-      if (!res.ok) {
-        const err = await res.json();
-        addToast(err.error || 'Error al actualizar', 'error');
-        return false;
-      }
-
-      addToast(`Solicitud ${nuevoEstado.toLowerCase()} exitosamente`, 'success');
-      setPage(1);
-      return true;
-    } catch {
-      addToast('Error de conexión', 'error');
-      return false;
-    }
+    addToast(`Solicitud ${nuevoEstado.toLowerCase()} exitosamente`, 'success');
+    setPage(1);
+    return true;
   }
 
   function formatMoney(n: number): string {

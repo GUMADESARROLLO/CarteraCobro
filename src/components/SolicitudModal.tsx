@@ -8,6 +8,7 @@ interface Solicitud {
   fecha: string;
   estado: string;
   motivo: string | null;
+  resolucion: string | null;
   saldo_actual: number;
   limite_actual: number;
   disponible_actual: number;
@@ -151,17 +152,30 @@ export default function SolicitudModal({ solicitud, onClose, onAprobar, onRechaz
               </span>
               <span className="text-zinc-700 dark:text-gray-300">{formatDate(solicitud.fecha)}</span>
             </div>
-            <div className="flex justify-between items-start px-4 py-2.5">
+            <div className="flex justify-between items-start px-4 py-2.5 border-b border-zinc-100 dark:border-gray-700">
               <span className="text-zinc-400 dark:text-gray-400 flex items-center gap-2 pt-0.5">
                 <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" strokeLinecap="round"/>
                 </svg>
-                Motivo
+                Resolución
               </span>
               <span className="text-zinc-700 dark:text-gray-300 text-right max-w-[55%]">
-                {solicitud.motivo || <span className="italic text-zinc-300 dark:text-gray-500">Sin motivo</span>}
+                {solicitud.resolucion || <span className="italic text-zinc-300 dark:text-gray-500">Sin resolución</span>}
               </span>
             </div>
+            {solicitud.motivo && (
+              <div className="flex justify-between items-start px-4 py-2.5">
+                <span className="text-zinc-400 dark:text-gray-400 flex items-center gap-2 pt-0.5">
+                  <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" strokeLinecap="round"/>
+                  </svg>
+                  Motivo
+                </span>
+                <span className="text-zinc-700 dark:text-gray-300 text-right max-w-[55%]">
+                  {solicitud.motivo}
+                </span>
+              </div>
+            )}
           </div>
         </div>
 

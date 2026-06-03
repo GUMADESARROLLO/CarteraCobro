@@ -530,7 +530,7 @@ export default function SolicitudesTable() {
                       <td className="whitespace-nowrap px-3 py-2.5 text-sm font-medium text-gray-900 dark:text-white">{s.codigo}</td>
                       <td className="whitespace-nowrap px-3 py-2.5 text-sm text-gray-500 dark:text-gray-400">{s.ruta}</td>
                       <td className="max-w-40 truncate px-3 py-2.5 text-sm text-gray-500 dark:text-gray-400" title={s.cliente}>{s.cliente}</td>
-                      <td className="whitespace-nowrap px-3 py-2.5 text-sm text-gray-500 dark:text-gray-400">{s.cod_cliente}</td>
+                      <td className="whitespace-nowrap px-3 py-2.5 text-sm text-gray-500 dark:text-gray-400">{s.cod_cliente.replace(/[-\s]+$/g, '')}</td>
                       <td className="whitespace-nowrap px-3 py-2.5 text-sm text-gray-900 dark:text-white">{formatMoney(s.monto)}</td>
                       <td className="whitespace-nowrap px-3 py-2.5 text-sm text-gray-500 dark:text-gray-400">{formatDate(s.fecha)}</td>
                       <td className="whitespace-nowrap px-3 py-2.5 text-sm">

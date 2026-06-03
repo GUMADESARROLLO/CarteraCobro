@@ -109,7 +109,7 @@ export default function SolicitudModal({ solicitud, onClose, onAprobar, onRechaz
                 {solicitud.cliente}
               </p>
               <p className="text-xs text-zinc-400 dark:text-gray-400 mt-0.5">
-                Cód. {solicitud.cod_cliente} &nbsp;·&nbsp; Ruta {solicitud.ruta}
+                Cód. {solicitud.cod_cliente.replace(/[-\s]+$/g, '')} &nbsp;·&nbsp; Ruta {solicitud.ruta}
               </p>
             </div>
           </div>

@@ -7,6 +7,7 @@ import { addDays, startOfMonth, endOfMonth, subMonths } from 'date-fns';
 import SkeletonTable from './SkeletonTable';
 import ToastContainer, { addToast } from './Toast';
 import ReciboModal from './ReciboModal';
+import ReciboPrintModal from './ReciboPrintModal';
 
 interface Recibo {
   id: number;
@@ -15,8 +16,9 @@ interface Recibo {
   name_cliente: string;
   fecha_recibo: string;
   ruta: string;
-  order_total: number;
+  order_total: string;
   order_list: string;
+  status: string;
 }
 
 interface ReciboResponse {
@@ -44,6 +46,7 @@ export default function RecibosTable() {
   const [showPicker, setShowPicker] = useState(false);
   const [applied, setApplied] = useState(1);
   const [revisarRecibo, setRevisarRecibo] = useState<Recibo | null>(null);
+  const [imprimirData, setImprimirData] = useState<Recibo[] | null>(null);
   const [vendedores, setVendedores] = useState<{ VENDEDOR: string; NOMBRE: string }[]>([]);
   const [vendedorSel, setVendedorSel] = useState('');
   const [buscar, setBuscar] = useState('');
@@ -266,19 +269,13 @@ export default function RecibosTable() {
               className="mt-1 w-40 rounded-lg border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-white"
             >
               <option value="">Todos</option>
-              {vendedores.map((v) => <option key={v.VENDEDOR} value={v.NOMBRE}>{v.VENDEDOR} - {v.NOMBRE}</option>)}
+              {vendedores.map((v) => <option key={v.VENDEDOR} value={v.VENDEDOR}>{v.VENDEDOR} - {v.NOMBRE}</option>)}
             </select>
           </div>
 
           <button onClick={handleFilter} className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700">Filtrar</button>
+          <button onClick={() => setImprimirData(data)} className="rounded-lg bg-gray-600 px-4 py-2 text-sm font-medium text-white hover:bg-gray-700">Imprimir</button>
           <button onClick={exportXLSX} className="rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700">Exportar</button>
-        </div>
-      </div>
-
-      <div className="mb-4">
-        <div className="rounded-xl border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/20 px-4 py-3 inline-block">
-          <p className="text-xs font-medium text-gray-500 dark:text-gray-400">Total Recibos</p>
-          <p className="text-2xl font-bold text-blue-700 dark:text-blue-300 mt-0.5">{data.length}</p>
         </div>
       </div>
 
@@ -303,7 +300,7 @@ export default function RecibosTable() {
                     const open = detallesOpen.has(r.id);
                     let items: Record<string, string>[] = [];
                     const parseLine = (line: string) => {
-                      const parts = line.replace(/^\[|\]$/g, '').split(';').map(s => s.trim());
+                      const parts = line.replace(/^\[|\]$/g, '').split(';').map(s => s.replace(/^[\[\],\s]+|[\[\],\s]+$/g, ''));
                       return {
                         FACTURA: parts[0] ?? '',
                         'VALOR FACTURA': parts[1] ?? '',
@@ -312,7 +309,7 @@ export default function RecibosTable() {
                         DESCUENTO: parts[4] ?? '',
                         'VALOR RECIBIDO': parts[5] ?? '',
                         SALDO: parts[6] ?? '',
-                        TIPO: parts[7] ?? '',
+                        TIPO: ((parts[8] || parts[7]) ?? '').toUpperCase(),
                       } as Record<string, string>;
                     };
 
@@ -333,30 +330,32 @@ export default function RecibosTable() {
                       }
                     }
                     return [
-                      <tr key={r.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                      <tr key={r.id} className={`hover:bg-gray-50 dark:hover:bg-gray-800/50 ${r.status === '4' ? 'bg-red-100 dark:bg-red-900/20' : ''}`}>
                         <td className="px-3 py-2.5 text-sm">
                           <button
                             onClick={() => setDetallesOpen(p => { const n = new Set(p); n.has(r.id) ? n.delete(r.id) : n.add(r.id); return n; })}
-                            className="flex items-center gap-1 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
+                            className="flex h-7 w-7 items-center justify-center rounded-full border border-gray-300 text-gray-500 hover:border-blue-500 hover:text-blue-600 dark:border-gray-600 dark:text-gray-400 dark:hover:border-blue-400 dark:hover:text-blue-400 transition-colors"
+                            title={open ? 'Cerrar' : 'Ver detalles'}
                           >
-                            <svg className={`w-4 h-4 transition-transform ${open ? 'rotate-90' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <svg className={`w-3.5 h-3.5 transition-transform ${open ? 'rotate-90' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                               <path d="M9 18l6-6-6-6" strokeLinecap="round" strokeLinejoin="round"/>
                             </svg>
-                            <span className="text-xs font-medium">{open ? 'Cerrar' : 'Ver'}</span>
                           </button>
                         </td>
                         <td className="whitespace-nowrap px-3 py-2.5 text-sm font-medium text-gray-900 dark:text-white">{r.recibo}</td>
-                        <td className="whitespace-nowrap px-3 py-2.5 text-sm text-gray-500 dark:text-gray-400">{r.cod_cliente}</td>
+                        <td className="whitespace-nowrap px-3 py-2.5 text-sm text-gray-500 dark:text-gray-400">{r.cod_cliente.replace(/[-\s]+$/g, '')}</td>
                         <td className="max-w-40 truncate px-3 py-2.5 text-sm text-gray-500 dark:text-gray-400" title={r.name_cliente}>{r.name_cliente}</td>
                         <td className="whitespace-nowrap px-3 py-2.5 text-sm text-gray-500 dark:text-gray-400">{formatDate(r.fecha_recibo)}</td>
                         <td className="whitespace-nowrap px-3 py-2.5 text-sm text-gray-500 dark:text-gray-400">{r.ruta}</td>
-                        <td className="whitespace-nowrap px-3 py-2.5 text-sm text-gray-900 dark:text-white">{formatMoney(r.order_total)}</td>
+                        <td className="whitespace-nowrap px-3 py-2.5 text-sm text-gray-900 dark:text-white">{r.order_total || '0.00'}</td>
                         <td className="whitespace-nowrap px-3 py-2.5 text-sm">
-                          <button onClick={() => setRevisarRecibo(r)} className="rounded bg-blue-500 px-2 py-1 text-xs font-medium text-white hover:bg-blue-600">Revisar</button>
+                          <div className="flex gap-1">
+                            <button onClick={() => setRevisarRecibo(r)} className="rounded bg-blue-500 px-2 py-1 text-xs font-medium text-white hover:bg-blue-600">Revisar</button>
+                          </div>
                         </td>
                       </tr>,
                       ...(open && items.length > 0 ? items.map((item, i) => (
-                        <tr key={`${r.id}-details-${i}`} className="bg-gray-50 dark:bg-gray-800/30">
+                        <tr key={`${r.id}-details-${i}`} className={`bg-gray-50 dark:bg-gray-800/30 ${r.status === '4' ? 'bg-red-50 dark:bg-red-900/10' : ''}`}>
                           <td colSpan={8} className="px-6 py-3">
                             <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2 text-xs">
                               {['FACTURA', 'VALOR FACTURA', 'VALOR N/C', 'RETENCION', 'DESCUENTO', 'VALOR RECIBIDO', 'SALDO', 'TIPO'].map((col) => (
@@ -396,6 +395,15 @@ export default function RecibosTable() {
             <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page >= totalPages} className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm disabled:opacity-40 dark:border-gray-600 dark:text-gray-300">Siguiente</button>
           </div>
         </div>
+      )}
+
+      {imprimirData && (
+        <ReciboPrintModal
+          recibos={imprimirData}
+          rutaFiltro={vendedorSel}
+          vendedorFiltro={vendedores.find(v => v.VENDEDOR === vendedorSel)?.NOMBRE || vendedorSel}
+          onClose={() => setImprimirData(null)}
+        />
       )}
 
       {revisarRecibo && (

@@ -43,8 +43,8 @@ export const GET: APIRoute = async ({ request, locals }) => {
 
   if (exportCsv) {
     const rows = await query<ReciboRow[]>(
-      `SELECT id, recibo, cod_cliente, name_cliente, fecha_recibo, ruta, order_total, order_list
-       FROM tbl_order_recibo ${where} ORDER BY fecha_recibo DESC LIMIT ?`,
+      `SELECT id, recibo, cod_cliente, name_cliente, fecha_recibo, ruta, order_total, order_list, status
+       FROM tbl_order_recibo ${where} ORDER BY recibo DESC LIMIT ?`,
       [...params, limit]
     );
     const data = rows.map((r) => ({
@@ -53,7 +53,7 @@ export const GET: APIRoute = async ({ request, locals }) => {
       Nombre: r.name_cliente,
       Fecha: r.fecha_recibo,
       Vendedor: r.ruta,
-      Total: Number(r.order_total),
+      Total: r.order_total,
       Detalles: r.order_list ?? '',
     }));
     const wb = XLSX.utils.book_new();
@@ -75,14 +75,14 @@ export const GET: APIRoute = async ({ request, locals }) => {
   const totalPages = Math.ceil(total / limit);
 
   const rows = await query<ReciboRow[]>(
-    `SELECT id, recibo, cod_cliente, name_cliente, fecha_recibo, ruta, order_total, order_list
-     FROM tbl_order_recibo ${where} ORDER BY fecha_recibo DESC LIMIT ? OFFSET ?`,
+    `SELECT id, recibo, cod_cliente, name_cliente, fecha_recibo, ruta, order_total, order_list, status
+     FROM tbl_order_recibo ${where} ORDER BY recibo DESC LIMIT ? OFFSET ?`,
     [...params, limit, offset]
   );
 
   return new Response(
     JSON.stringify({
-      data: rows.map((r) => ({ ...r, order_total: Number(r.order_total) })),
+      data: rows.map((r) => ({ ...r })),
       page, totalPages, total,
     }),
     { status: 200, headers: { 'Content-Type': 'application/json' } }

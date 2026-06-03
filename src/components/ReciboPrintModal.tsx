@@ -158,7 +158,7 @@ export default function ReciboPrintModal({ recibos: recibosRaw, rutaFiltro, vend
             body: items.map((item) => detailHead.map((col, ci) => {
               if (ci === 0 || ci === 7) return item[col] || '';
               const num = parseFloat(item[col]);
-              return isNaN(num) ? (item[col] || '') : `C$ ${formatCurrency(num)}`;
+              return isNaN(num) ? (item[col] || '') : formatCurrency(num);
             })),
             bodyStyles: { fontSize: 8, cellPadding: 2 },
             alternateRowStyles: { fillColor: [245, 245, 245] },
@@ -180,7 +180,7 @@ export default function ReciboPrintModal({ recibos: recibosRaw, rutaFiltro, vend
             startY: y,
             tableWidth: pageW - 20,
             margin: { left: 10 },
-            body: [['', '', '', '', '', { content: `C$ ${formatCurrency(valorRecibido)}`, styles: { fillColor: [211, 211, 211] } }, '', '']],
+            body: [['', '', '', '', '', { content: formatCurrency(valorRecibido), styles: { fillColor: [211, 211, 211] } }, '', '']],
             bodyStyles: { fontSize: 11, cellPadding: 2.5, halign: 'right' },
             columnStyles: {
               0: { cellWidth: 25 },
@@ -204,7 +204,7 @@ export default function ReciboPrintModal({ recibos: recibosRaw, rutaFiltro, vend
 
       doc.setFont('helvetica', 'bold');
       doc.setFontSize(11);
-      doc.text(`TOTAL RECIBIDO C$ ${formatCurrency(totalRecibidoGeneral)}`, pageW - 14, y + 8, { align: 'right' });
+      doc.text(`TOTAL RECIBIDO ${formatCurrency(totalRecibidoGeneral)}`, pageW - 14, y + 8, { align: 'right' });
 
       y += 18;
       doc.setFont('helvetica', 'bold');
@@ -257,7 +257,10 @@ export default function ReciboPrintModal({ recibos: recibosRaw, rutaFiltro, vend
               <div><p className="text-[10px] uppercase tracking-widest text-zinc-400 mb-0.5">Vendedor</p><p className="font-medium text-zinc-900 dark:text-white">{vendedorFiltro || '—'}</p></div>
               <div><p className="text-[10px] uppercase tracking-widest text-zinc-400 mb-0.5">Fecha</p><p className="font-medium text-zinc-900 dark:text-white">{new Date().toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit', year: 'numeric' })}</p></div>
             </div>
-            <div className="text-right"><p className="text-[10px] uppercase tracking-widest text-zinc-400 mb-0.5">Total General</p><p className="font-bold text-lg text-zinc-900 dark:text-white">{formatCurrency(granTotal)}</p></div>
+            <div className="text-right">
+              <p className="text-[10px] uppercase tracking-widest text-zinc-400 mb-0.5">Gran Total Recibido C$</p>
+              <p className="text-lg font-bold text-zinc-900 dark:text-white">{formatCurrency(granTotal)}</p>
+            </div>
           </div>
 
           <div className="space-y-3 mb-6">
@@ -311,18 +314,19 @@ export default function ReciboPrintModal({ recibos: recibosRaw, rutaFiltro, vend
         </div>
 
         <div className="px-6 py-4 border-t border-zinc-100 dark:border-gray-700 space-y-3 shrink-0">
-          <div className="flex justify-between items-center text-sm">
-            <span className="font-semibold text-zinc-600 dark:text-gray-300">Gran Total Recibido C$</span>
-            <span className="text-lg font-bold text-zinc-900 dark:text-white">{formatCurrency(granTotal)}</span>
-          </div>
           <div>
             <label className="text-[11px] uppercase tracking-widest text-zinc-400 mb-1 block font-medium">Nota</label>
             <textarea value={nota} onChange={(e) => setNota(e.target.value)} rows={2}
               className="w-full rounded-lg border border-zinc-200 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-zinc-700 dark:text-gray-300 resize-none"
               placeholder="Escribe una nota..." />
           </div>
-          <div className="flex justify-end gap-2">
-            <button onClick={onClose} className="text-sm px-5 py-2 rounded-lg border border-zinc-200 dark:border-gray-600 text-zinc-600 dark:text-gray-300 hover:bg-zinc-50 dark:hover:bg-gray-700">Cerrar</button>
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <span className="text-xs font-semibold text-red-600">{formatCurrency(allItems.filter(i => i.TIPO === 'ANULADO').reduce((s, i) => s + (parseFloat(i['VALOR RECIBIDO']) || 0), 0))} | ({allItems.filter(i => i.TIPO === 'ANULADO').length})</span>
+              <span className="text-xs font-semibold text-green-600">{formatCurrency(allItems.filter(i => i.TIPO === 'CANCELACION').reduce((s, i) => s + (parseFloat(i['VALOR RECIBIDO']) || 0), 0))} | ({allItems.filter(i => i.TIPO === 'CANCELACION').length})</span>
+              <span className="text-xs font-semibold text-blue-600">{formatCurrency(allItems.filter(i => i.TIPO === 'ABONO').reduce((s, i) => s + (parseFloat(i['VALOR RECIBIDO']) || 0), 0))} | ({allItems.filter(i => i.TIPO === 'ABONO').length})</span>
+            </div>
+            <button onClick={onClose} className="text-sm px-5 py-2 rounded-lg border border-zinc-200 dark:border-gray-600 text-zinc-600 dark:text-gray-300 hover:bg-zinc-50 dark:hover:bg-gray-700 shrink-0">Cerrar</button>
           </div>
         </div>
       </div>

@@ -46,7 +46,7 @@ export default function UserModal({ user, onClose, onSaved }: UserModalProps) {
     return () => window.removeEventListener('keydown', handleKey);
   }, [onClose]);
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.SyntheticEvent) {
     e.preventDefault();
     if (!name.trim() || !email.trim() || (!isEdit && !password)) {
       addToast('Complete todos los campos requeridos', 'error');

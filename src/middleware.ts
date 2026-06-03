@@ -1,5 +1,5 @@
 import { defineMiddleware } from 'astro:middleware';
-import { validateSession, type SessionUser } from './lib/session';
+import { validateSession } from './lib/session';
 import { initDatabase } from './lib/db';
 
 let dbInitialized = false;

@@ -60,7 +60,7 @@ export default function SolicitudesTable() {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [total, setTotal] = useState(0);
+  const [, setTotal] = useState(0);
   const [estado, setEstado] = useState('');
   const [ruta, setRuta] = useState('');
   const [fechaDesde, setFechaDesde] = useState(fmt(firstOfMonth));

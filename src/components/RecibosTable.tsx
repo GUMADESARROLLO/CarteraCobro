@@ -40,7 +40,7 @@ export default function RecibosTable() {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [total, setTotal] = useState(0);
+  const [, setTotal] = useState(0);
   const [fechaDesde, setFechaDesde] = useState(fmt(firstOfMonth));
   const [fechaHasta, setFechaHasta] = useState(fmt(today));
   const [showPicker, setShowPicker] = useState(false);
@@ -206,11 +206,6 @@ export default function RecibosTable() {
       URL.revokeObjectURL(url);
       addToast('Exportado correctamente', 'success');
     } catch { addToast('Error al exportar', 'error'); }
-  }
-
-  function formatMoney(n: number | null | undefined): string {
-    if (n == null || isNaN(Number(n))) return '0.00';
-    return Number(n).toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   }
 
   function formatDate(d: string | null | undefined): string {

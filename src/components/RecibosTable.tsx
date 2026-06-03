@@ -350,7 +350,10 @@ export default function RecibosTable() {
                         <td className="whitespace-nowrap px-3 py-2.5 text-sm text-gray-900 dark:text-white">{r.order_total || '0.00'}</td>
                         <td className="whitespace-nowrap px-3 py-2.5 text-sm">
                           <div className="flex gap-1">
-                            <button onClick={() => setRevisarRecibo(r)} className="rounded bg-blue-500 px-2 py-1 text-xs font-medium text-white hover:bg-blue-600">Revisar</button>
+                            <button onClick={() => setRevisarRecibo(r)} className="rounded bg-blue-500 px-2.5 py-1.5 text-xs font-medium text-white hover:bg-blue-600 flex items-center gap-1" title="Ver recibo + fotos">
+  <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z" strokeLinecap="round" strokeLinejoin="round"/><circle cx="12" cy="13" r="4" strokeLinecap="round" strokeLinejoin="round"/></svg>
+  Fotos
+</button>
                           </div>
                         </td>
                       </tr>,

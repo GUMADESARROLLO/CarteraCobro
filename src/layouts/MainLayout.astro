@@ -1,5 +1,6 @@
 ---
 import Sidebar from '../components/Sidebar';
+import UserDropdown from '../components/UserDropdown';
 import '../styles/global.css';
 
 export interface Props {
@@ -30,16 +31,7 @@ const title = Astro.props.title;
         <header class="flex h-16 shrink-0 items-center justify-between border-b border-gray-200 bg-white px-4 dark:border-gray-700 dark:bg-gray-800 sm:px-6">
           <h1 class="text-lg font-semibold text-gray-900 dark:text-white">{title}</h1>
           {
-            user && (
-              <div class="flex items-center gap-3">
-                <span class="text-sm text-gray-500 dark:text-gray-400">
-                  {user.name}
-                </span>
-                <span class="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900 dark:text-blue-300">
-                  {user.role}
-                </span>
-              </div>
-            )
+            user && <UserDropdown client:load name={user.name} role={user.role} />
           }
         </header>
 

@@ -1,16 +1,17 @@
 import mysql from 'mysql2/promise';
 import type { Pool } from 'mysql2/promise';
+import './env';
 
 let pool: Pool | null = null;
 
 export function getPool(): Pool {
   if (!pool) {
     pool = mysql.createPool({
-      host: import.meta.env.DB_HOST,
-      port: Number(import.meta.env.DB_PORT),
-      user: import.meta.env.DB_USER,
-      password: import.meta.env.DB_PASSWORD,
-      database: import.meta.env.DB_NAME,
+      host: process.env.DB_HOST || '',
+      port: Number(process.env.DB_PORT),
+      user: process.env.DB_USER || '',
+      password: process.env.DB_PASSWORD || '',
+      database: process.env.DB_NAME || '',
       waitForConnections: true,
       connectionLimit: 10,
       maxIdle: 10,

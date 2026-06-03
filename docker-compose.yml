@@ -1,0 +1,24 @@
+version: '3.9'
+
+services:
+  app:
+    container_name: cn-carteracobro-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '4321:4321'
+    environment:
+      HOST: '0.0.0.0'
+      PORT: '4321'
+      DB_HOST: ${DB_HOST:-localhost}
+      DB_PORT: ${DB_PORT:-3306}
+      DB_USER: ${DB_USER:-root}
+      DB_PASSWORD: ${DB_PASSWORD:-}
+      DB_NAME: ${DB_NAME:-cartera_cobro}
+      SESSION_SECRET: ${SESSION_SECRET:-change-me-to-a-random-64-char-string}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-minioadmin}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-minioadmin}
+      AWS_BUCKET: ${AWS_BUCKET:-cartera_cobro}
+      AWS_ENDPOINT: ${AWS_ENDPOINT:-http://minio:9000}
+    restart: unless-stopped

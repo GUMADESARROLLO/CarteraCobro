@@ -7,7 +7,7 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - '4321:4321'
+      - '8190:4321'
     environment:
       HOST: '0.0.0.0'
       PORT: '4321'

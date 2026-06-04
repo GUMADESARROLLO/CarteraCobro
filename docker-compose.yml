@@ -1,5 +1,3 @@
-version: '3.9'
-
 services:
   app:
     container_name: cn-carteracobro-app
@@ -16,9 +14,18 @@ services:
       DB_USER: ${DB_USER:-root}
       DB_PASSWORD: ${DB_PASSWORD:-}
       DB_NAME: ${DB_NAME:-cartera_cobro}
+
       SESSION_SECRET: ${SESSION_SECRET:-change-me-to-a-random-64-char-string}
+      
       AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-minioadmin}
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-minioadmin}
       AWS_BUCKET: ${AWS_BUCKET:-cartera_cobro}
       AWS_ENDPOINT: ${AWS_ENDPOINT:-http://minio:9000}
+
+      DB_SQLSRV_HOST: ${DB_SQLSRV_HOST:-localhost}
+      DB_SQLSRV_PORT: ${DB_SQLSRV_PORT:-1433}
+      DB_SQLSRV_DATABASE: ${DB_SQLSRV_DATABASE:-cartera_cobro}
+      DB_SQLSRV_USERNAME: ${DB_SQLSRV_USERNAME:-sa}
+      DB_SQLSRV_PASSWORD: ${DB_SQLSRV_PASSWORD:-cartera_cobro}
+
     restart: unless-stopped
